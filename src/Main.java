@@ -79,11 +79,12 @@ public class Main extends PApplet {
     public void draw() {
         currentDayFloat = animationFrames /(float) FRAMES_PER_DAY;
         currentDay = (int) currentDayFloat;
-        currentScale = weightedAverage(scales, currentDayFloat, MARGIN_WINDOW);
+        float daysShown = currentDayFloat;
+        currentScale = weightedAverage(scales, daysShown, MARGIN_WINDOW);
         background(0);
         drawGridLines();
         drawUnitLines();
-        drawPeopleLines(currentDay, TICKMARKS, TICKMARK_INTERVAL, animationFrames);
+        drawPeopleLines(currentDay, daysShown, animationFrames);
         drawAxes();
         drawLabel();
         stroke(255);
@@ -157,7 +158,7 @@ public class Main extends PApplet {
         }
     }
 
-    public void drawPeopleLines(int currentDay, int TICKMARKS, int TICKMARK_INTERVAL, int animationFrames) {
+    public void drawPeopleLines(int currentDay, float daysShown, int animationFrames) {
         for (int p = 0; p < people.length; p++) {
             Person pe = people[p];
             //current lines
@@ -167,12 +168,12 @@ public class Main extends PApplet {
             stroke(pe.red, pe.green, pe.blue);
             strokeWeight(4);
             boolean shape = true;
-            for (int i = Math.max(0, currentDay - TICKMARKS * TICKMARK_INTERVAL); i <= Math.min(currentDay, pe.values.length - 1); i++) {
+            for (int i = Math.max(0, currentDay - (int) daysShown); i <= Math.min(currentDay, pe.values.length - 1); i++) {
                 if (!pe.shown[i]){
                     if (shape) {
                         shape = false;
                         float val = weightedAverage(pe.values, i, VALUE_WINDOW);
-                        float X = dayToX(i, animationFrames);
+                        float X = dayToX(i, animationFrames, daysShown);
                         float Y = valueToY(val, currentScale);
                         vertex(X, Y);
                         endShape();
@@ -183,7 +184,7 @@ public class Main extends PApplet {
                     shape=true;
                 }
                 float val = weightedAverage(pe.values, i, VALUE_WINDOW);
-                float X = dayToX(i, animationFrames);
+                float X = dayToX(i, animationFrames, daysShown);
                 float Y = valueToY(val, currentScale);
                 if (X <= HORIZ_MARGINS) {
                     X = HORIZ_MARGINS;
@@ -313,8 +314,8 @@ public class Main extends PApplet {
         return weightedAverage(maxes, d, MARGIN_WINDOW) * 1.2f;
     }
 
-    public float dayToX(int day, int currentFrame) {
-        return (float) (WIDTH + HORIZ_MARGINS - ((currentFrame % FRAMES_PER_DAY)/ (double) FRAMES_PER_DAY - (day - currentDay)) * WIDTH/(double) (TICKMARKS * TICKMARK_INTERVAL));
+    public float dayToX(int day, int currentFrame, float daysShown) {
+        return (float) (WIDTH + HORIZ_MARGINS - ((currentFrame % FRAMES_PER_DAY)/ (double) FRAMES_PER_DAY - (day - currentDay)) * WIDTH/(double) (daysShown));
     }
 
     public long unitIndexToUnit(float u) {
