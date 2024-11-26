@@ -13,7 +13,7 @@ public class Main extends PApplet {
 
     static int FRAMES_PER_DAY = 5;
 
-    static int TICKMARKS = 2;
+    static int TICKMARKS = 4;
     static int TICKMARK_INTERVAL = 7;
     static int DAYS_SHOWN = TICKMARK_INTERVAL * TICKMARKS;
     static float TICKMARK_THICKNESS = 4;
@@ -44,6 +44,7 @@ public class Main extends PApplet {
     private boolean SYNC_WITH_AUDIO = true;
     private VideoExport videoExport;
 
+    static PFont asianFont;
 
     public void settings() {
         size(WINDOW_WIDTH, WINDOW_HEIGHT);
@@ -52,11 +53,13 @@ public class Main extends PApplet {
     }
 
     public void setup() {
+        asianFont = createFont("data/GoNotoCJKCore.ttf", 40);
+
         frameRate(60);
         PFont font = createFont("Arial", 40);
-        textFont(font);
+        textFont(asianFont);
 
-        people = DataReader.readFile("data/out.csv");
+        people = DataReader.readFile("data/artists-time.csv");
         if (TOP_VISIBLE > 0) {
             doTopVisible(people, TOP_VISIBLE);
         }
@@ -73,6 +76,7 @@ public class Main extends PApplet {
             videoExport.setFrameRate(((people[0].values.length - 1) * FRAMES_PER_DAY)/ (float) duration);
         }
         videoExport.setAudioFileName("music/Toby Fox - Fallen Down.mp3");
+        videoExport.setQuality(50, 128);
         videoExport.startMovie();
     }
 
@@ -109,9 +113,11 @@ public class Main extends PApplet {
         noStroke();
         textAlign(LEFT);
         textSize(70);
-        text("Top People Messaged on ", HORIZ_MARGINS + 60, VERT_MARGINS * 2f);
+        String titleString = "Top Artists Listened To in Minutes\n(Last 30 Days)";
+        text(titleString, HORIZ_MARGINS + 60, VERT_MARGINS * 2f);
+        int lines = titleString.split("\n").length;
         textSize(100);
-        text(frameToDay(animationFrames).format(DateTimeFormatter.ofPattern("MMM dd, yyyy")), HORIZ_MARGINS + 60, VERT_MARGINS * 3f);
+        text(frameToDay(animationFrames).format(DateTimeFormatter.ofPattern("MMM dd, yyyy")), HORIZ_MARGINS + 60, 70 + 70 * lines + VERT_MARGINS * 2f);
     }
 
     public void drawGridLines() {
