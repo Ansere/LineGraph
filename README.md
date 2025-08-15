@@ -6,6 +6,7 @@ A program to visualize data as an animated line graph. Some code is adapted from
 - Easily make your own animated line graph with automatic scaling
 - Add your own audio
 - Adjust the smoothing of data values in the output and how fast the animation runs
+- Export the animation as an mp4
 
 ## Usage
 - Download this repository and unzip everything
